@@ -1,6 +1,6 @@
 # OpenRaster documents
 
-PhotoCraft opens and saves OpenRaster (`.ora`), the layered format Krita, MyPaint, GIMP, Pinta
+Tend's Photo opens and saves OpenRaster (`.ora`), the layered format Krita, MyPaint, GIMP, Pinta
 and others share. File › Open, recent files, drops, Save and Save As, the CLI (`convert`, `info`,
 `batch`) and automation (`doc.open`, `doc.save`, MCP) all use the same reader and writer in
 `photocraft-io`. The browser build accepts `.ora` too. A file is recognised by its `mimetype`
@@ -61,7 +61,7 @@ KRITA_TEST_DIR=/path/to/photocraft-corpus/krita cargo test -p photocraft-io --te
 other four differ for known reasons listed in `crates/io/tests/krita_corpus.rs` (Krita's
 tie-break in Darker and Lighter Color, Hard Mix at a channel sum of exactly 1, and a
 linear-light 16-bit document that Krita blends in linear light). In the other direction,
-Krita opened every PhotoCraft re-export of those files and rendered 33 of them identically to
+Krita opened every Tend's Photo re-export of those files and rendered 33 of them identically to
 its original; the exception is Photoshop's Soft Light, which is written as `svg:soft-light`.
 MyPaint and GIMP files have not been checked yet.
 

@@ -1,4 +1,4 @@
-# Where PhotoCraft falls short of Photoshop
+# Where Tend's Photo falls short of Photoshop
 
 > **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-12 · **Change:** minor (G11: Load/Save Actions `.atn` landed, AUTO-219-2 partial; 2026-10-11: G8: Character panel OpenType buttons landed, TYPE-218-5 stays partial; G8: triple-, quadruple- and five-click type selection landed, TYPE-218-8 done; Czech UI localization evidence added to G13; G14: D5100 crop and Camera Raw tuning validation) · **Target:** Adobe Photoshop 2026
 
@@ -123,7 +123,7 @@ what an agent can't finish alone.
 - **Estimate:** 300–600 h. **Human:** owner decision #41 (model licences, local vs remote).
 
 ### G16. Plug-in compatibility
-- **Missing:** hosting Photoshop .8BF filters (#2647), UXP panels, CEP. PhotoCraft has its own
+- **Missing:** hosting Photoshop .8BF filters (#2647), UXP panels, CEP. Tend's Photo has its own
   sandboxed WebAssembly plug-in ABI v1 (`docs/plugins.md`), but ABI v2 (panels, progress, other
   layers) is missing (AUTO-219-6).
 - **Estimate:** 250–450 h. **Human:** .8BF needs native code under the isolated-`unsafe` rule.

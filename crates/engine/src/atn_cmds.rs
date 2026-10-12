@@ -1,11 +1,11 @@
 //! Photoshop Actions files (`.atn`): Load Actions (`actions.load`) and Save Actions
 //! (`actions.save`), plus the two step commands a Photoshop set needs: `actions.stopMessage`
-//! (Photoshop's Insert Stop) and `actions.photoshopStep` (a step PhotoCraft has no command for
+//! (Photoshop's Insert Stop) and `actions.photoshopStep` (a step Tend's Photo has no command for
 //! yet, kept verbatim so Save Actions writes it back unchanged).
 //!
 //! Parsing and writing live in `photocraft-psd` (`atn`); this module maps Photoshop *events*
 //! (`gaussianBlur` with `Rds`, `make` of an adjustment layer, `set` of the selection…) onto
-//! PhotoCraft commands and back. An event is keyed by both its four-character code (`GsnB`,
+//! Tend's Photo commands and back. An event is keyed by both its four-character code (`GsnB`,
 //! older files) and its string name (`gaussianBlur`, Photoshop 2024 and later), as the two are
 //! interchangeable in Photoshop. The table ([`EVENTS`]) is bidirectional: a step that was
 //! imported exports to the same event. Events outside it become `actions.photoshopStep` steps,
@@ -23,12 +23,12 @@ use crate::actions_cmds::Action;
 use crate::commands::CommandSpec;
 use crate::{EngineError, Result, Session};
 
-/// A step PhotoCraft cannot play yet, kept verbatim (`{"event", "name", "descriptor": base64}`).
+/// A step Tend's Photo cannot play yet, kept verbatim (`{"event", "name", "descriptor": base64}`).
 pub const PHOTOSHOP_STEP: &str = "actions.photoshopStep";
 /// Photoshop's Insert Stop: `{"message", "allowContinue"}`.
 pub const STOP_MESSAGE: &str = "actions.stopMessage";
 /// The set name Save Actions uses for actions that came from no set.
-pub const DEFAULT_SET: &str = "PhotoCraft Actions";
+pub const DEFAULT_SET: &str = "Tend's Photo Actions";
 
 fn bad(cmd: &str, msg: impl Into<String>) -> EngineError {
     EngineError::BadParams { cmd: cmd.into(), msg: msg.into() }
@@ -295,7 +295,7 @@ fn path_value(text: &str) -> D {
     D::Path(b)
 }
 
-/// Photoshop's `BlnM` enumeration ↔ PhotoCraft's blend mode labels.
+/// Photoshop's `BlnM` enumeration ↔ Tend's Photo's blend mode labels.
 const BLEND_MODES: &[(&str, &str)] = &[
     ("Nrml", "Normal"),
     ("Dslv", "Dissolve"),
@@ -335,7 +335,7 @@ fn blend_ps(label: &str) -> Option<&'static str> {
     crate::commands::blend_from_str(label).and_then(|m| BLEND_MODES.iter().find(|(_, v)| crate::commands::blend_from_str(v) == Some(m))).map(|(k, _)| *k)
 }
 
-/// Photoshop ↔ PhotoCraft value tables; Photoshop codes compare without their space padding.
+/// Photoshop ↔ Tend's Photo value tables; Photoshop codes compare without their space padding.
 fn lookup<'a>(table: &'a [(&'a str, &'a str)], key: &str) -> Option<&'a str> {
     table.iter().find(|(k, _)| k.trim_end() == key.trim_end()).map(|(_, v)| *v)
 }
@@ -388,7 +388,7 @@ enum Kind {
     Long,
     Dbl,
     Bool,
-    /// An enumeration: its type id and the Photoshop ↔ PhotoCraft value pairs.
+    /// An enumeration: its type id and the Photoshop ↔ Tend's Photo value pairs.
     Enum(&'static str, &'static [(&'static str, &'static str)]),
     /// A blend mode (`BlnM`).
     Blend,
@@ -837,9 +837,9 @@ fn adjustment_by_suffix(suffix: &str) -> Option<&'static Adjustment> {
 
 /// What one Photoshop step maps to.
 enum Mapped {
-    /// One or more PhotoCraft steps (a `make` with a name becomes new layer + rename).
+    /// One or more Tend's Photo steps (a `make` with a name becomes new layer + rename).
     Steps(Vec<(String, Value)>),
-    /// No PhotoCraft equivalent; `harmless` steps (tool selections…) are imported switched off.
+    /// No Tend's Photo equivalent; `harmless` steps (tool selections…) are imported switched off.
     Unsupported { harmless: bool },
 }
 
@@ -2141,7 +2141,7 @@ macro_rules! adjustment_event {
     };
 }
 
-/// Every Photoshop event PhotoCraft maps. The order matters only for the panel label.
+/// Every Photoshop event Tend's Photo maps. The order matters only for the panel label.
 const EVENTS: &[Event] = &[
     // Filters.
     ev!("GsnB", "gaussianBlur", "Gaussian Blur", "filter.blur.gaussianBlur", &[F("Rds ", "radius", Kind::Px)]),
@@ -2513,7 +2513,7 @@ fn event_and_descriptor(id: &str, params: &Value) -> Option<(&'static Event, Des
 
 // ------------------------------------------------------------------ import
 
-/// A step with no PhotoCraft equivalent.
+/// A step with no Tend's Photo equivalent.
 #[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct Unsupported {
     pub action: String,
@@ -2826,7 +2826,7 @@ fn stop_message(_: &mut Session, p: &Value) -> Result<Value> {
 fn photoshop_step_run(_: &mut Session, p: &Value) -> Result<Value> {
     let name = jstr(p, "name").filter(|n| !n.is_empty()).unwrap_or("this step");
     let event = jstr(p, "event").unwrap_or("?");
-    Err(EngineError::Other(format!("Photoshop step \"{name}\" ({event}) has no PhotoCraft equivalent yet; switch it off in the Actions panel to skip it")))
+    Err(EngineError::Other(format!("Photoshop step \"{name}\" ({event}) has no Tend's Photo equivalent yet; switch it off in the Actions panel to skip it")))
 }
 
 pub fn specs() -> Vec<CommandSpec> {
@@ -2836,7 +2836,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Load Actions…",
             menu: &[],
             shortcut: None,
-            params: r##"{"path":".atn file"?,"data":base64 bytes?,"set":name? (override the file's set name),"replace":bool=true (replace the actions of a set of the same name)} → {set, actions:[names], steps, unsupported:[{action, step, event, name}], functionKeys:[{action, key}], warnings}. Photoshop steps PhotoCraft cannot play become actions.photoshopStep steps (kept for Save Actions; they fail at playback with the step's name); tool selections and other steps with no document effect are imported switched off. Layer references by name replay in any document."##,
+            params: r##"{"path":".atn file"?,"data":base64 bytes?,"set":name? (override the file's set name),"replace":bool=true (replace the actions of a set of the same name)} → {set, actions:[names], steps, unsupported:[{action, step, event, name}], functionKeys:[{action, key}], warnings}. Photoshop steps Tend's Photo cannot play become actions.photoshopStep steps (kept for Save Actions; they fail at playback with the step's name); tool selections and other steps with no document effect are imported switched off. Layer references by name replay in any document."##,
             enabled: always,
             run: load,
             journal: false,
@@ -2846,7 +2846,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Save Actions…",
             menu: &[],
             shortcut: None,
-            params: r##"{"path":".atn file"? (else the bytes come back as base64 `data`),"set":name? (that set's actions; default: every action, as the set "PhotoCraft Actions"),"action":name|index? (one action),"skipUnsupported":bool=false (leave out steps with no Photoshop equivalent instead of failing)} → {set, actions:[names], steps, bytes, skipped:[{action, step, id}], path|data}"##,
+            params: r##"{"path":".atn file"? (else the bytes come back as base64 `data`),"set":name? (that set's actions; default: every action, as the set "Tend's Photo Actions"),"action":name|index? (one action),"skipUnsupported":bool=false (leave out steps with no Photoshop equivalent instead of failing)} → {set, actions:[names], steps, bytes, skipped:[{action, step, id}], path|data}"##,
             enabled: always,
             run: save,
             journal: false,
@@ -2866,7 +2866,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Photoshop Step",
             menu: &[],
             shortcut: None,
-            params: r##"{"event":id,"name":str,"descriptor":base64?} (a step from a .atn file PhotoCraft has no command for: fails at playback, written back by actions.save)"##,
+            params: r##"{"event":id,"name":str,"descriptor":base64?} (a step from a .atn file Tend's Photo has no command for: fails at playback, written back by actions.save)"##,
             enabled: always,
             run: photoshop_step_run,
             journal: true,

@@ -1,6 +1,6 @@
 # Credits
 
-PhotoCraft is created and maintained by the ArtCraft team and PhotoCraft contributors. Project ownership, copyright, and licensing remain as stated in the repository's `README.md`, `NOTICE`, and license files. Every merged contribution is credited in the repository history and release notes.
+Tend's Photo is a fork of PhotoCraft, created by the ArtCraft team and the PhotoCraft contributors, and maintained here by Voltrun Games. Project ownership, copyright, and licensing remain as stated in the repository's `README.md`, `NOTICE`, and license files. Every merged contribution is credited in the repository history and release notes.
 
 ## Documentation
 

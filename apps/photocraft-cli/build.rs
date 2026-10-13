@@ -19,7 +19,7 @@ fn main() -> std::io::Result<()> {
     res.set_icon("../../assets/app-icon/photocraft.ico")
         .set("ProductName", "Tend's Photo")
         .set("FileDescription", "Tend's Photo command-line interface")
-        .set("CompanyName", "Learning Machines LLC")
+        .set("CompanyName", "Voltrun Games")
         .set("LegalCopyright", "Copyright (c) the Tend's Photo authors. MIT OR Apache-2.0.")
         .set("OriginalFilename", "photocraft-cli.exe")
         .set("InternalName", "photocraft-cli");
